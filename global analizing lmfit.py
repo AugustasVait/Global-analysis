@@ -13,17 +13,22 @@ Objectives:
         +kinetiku (dif lygčiu sprendiniu) (laiko dimensija)
         jas sudauginame ir susumuojame
         
-    vizualizacijos sketch:
-        spektrai  | spektrai * kinetikos karpetas | eksperimentas
-        ----------+-------------------------------+--------------
-        kinetikos | spektrai * kinetikos pjūvis   | residual
 """
 
-#%% imports and definitions
+#%% import libraries and data
 
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
+import lmfit
+
+
+
+test_data_file = np.loadtxt("D:\\Python Playground\\global analysis test\\test data\\"+
+                          "pp_g68_340_1,5uJ_30kHz_eV.dat_pptraces_nochirp.dat")
+
+#%% funkcijos
+
 
 def skewed_g(X, A, x0, W, b, Y0):
     """
@@ -93,7 +98,7 @@ def laser_gauss (t):
         lazerio intensyvumas duotu laiku.
 
     """
-    N_ext, t_00, t_Laser = 1, 1, 0.35
+    N_ext, t_00, t_Laser = 2, 0, 0.35
     return (N_ext)*np.exp(-(t-t_00)**2/(t_Laser**2))
 
 def box_kinetic_model(N, t, t_constants):
@@ -162,7 +167,7 @@ def box_scheme(X, Y,
 def carpet_plot(x_axis, y_axis, z_data, title, clr_min_max_mp):
     """docstings"""
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True,
+    fig_c, (ax1, ax2) = plt.subplots(2, 1, sharex=True,
                                    gridspec_kw={'height_ratios': [3, 1]})
 
     im1 = ax1.pcolormesh(x_axis, y_axis, z_data, shading='auto',
@@ -182,25 +187,25 @@ def carpet_plot(x_axis, y_axis, z_data, title, clr_min_max_mp):
     ax2.spines['top'].set_visible(False)
     ax1.tick_params(labeltop=False)
 
-    plt.xlim(1, 3)
+    plt.xlim(1.3, 2.6)
 
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.6])
-    fig.colorbar(im2, ax=ax1, cax=cbar_ax)
-    fig.subplots_adjust(hspace=0)
-    fig.subplots_adjust(right=0.825)
+    cbar_ax = fig_c.add_axes([0.85, 0.15, 0.05, 0.6])
+    fig_c.colorbar(im2, ax=ax1, cax=cbar_ax)
+    fig_c.subplots_adjust(hspace=0)
+    fig_c.subplots_adjust(right=0.825)
 
-    fig.text(0.04, 0.5, 'Delay (ps)', va='center', ha='center',
+    fig_c.text(0.04, 0.5, 'Delay (ps)', va='center', ha='center',
              rotation='vertical', fontsize=12)
-    fig.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center',
+    fig_c.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center',
              fontsize=12)
-    fig.text(0.85, 0.78, r'   $\Delta$T'+' \n(mOD)', fontsize=12)
+    fig_c.text(0.85, 0.78, r'   $\Delta$T'+' \n(mOD)', fontsize=12)
 
 CV_color_dict = {0: 'black', 1: 'red', 2: 'blue', 3: 'green', 4: 'purple',
                  5: 'orange'}
 
-def kinetikos_2scale(ps_scale, box_kin, labels, title):
+def kinetikos_2scale(ps_scale, box_kin, title):
     "docstring"
-    fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True,
+    fig_k, (ax1, ax2) = plt.subplots(1, 2, sharey=True,
                                    gridspec_kw={'width_ratios': [1, 3]})
 
     title = "Box concentration over time " + title
@@ -212,6 +217,10 @@ def kinetikos_2scale(ps_scale, box_kin, labels, title):
         ax2.plot(ps_scale, box_kin[:, idx],
                  label='box '+str(idx), color=CV_color_dict[idx])
 
+    ax1.plot(ps_scale, laser_gauss(ps_scale),
+                 color='purple')
+    ax2.plot(ps_scale, laser_gauss(ps_scale),
+                 label='laser ', color='purple')
 
 #    ax1.plot(real_data[0], real_data[1][:, ev_idx], label='sum')
 #    ax2.plot(real_data[0], real_data[1][:, ev_idx], label='experimental')
@@ -221,67 +230,154 @@ def kinetikos_2scale(ps_scale, box_kin, labels, title):
     ax2.set_xlim(2, 7000)
     ax2.set_xscale("log")
 
-    fig.text(0.5, 0.85, title, va='center', ha='center', fontsize=12)
+    fig_k.text(0.5, 0.85, title, va='center', ha='center', fontsize=12)
 
     ax1.spines['right'].set_visible(False)
     ax2.spines['left'].set_visible(False)
     # ax1.tick_params(labeltop=False)
-    fig.subplots_adjust(wspace=0)
+    fig_k.subplots_adjust(wspace=0)
     ax2.tick_params(labelleft=False, length=0)
-    fig.subplots_adjust(top=0.80)
-    fig.text(0.04, 0.5, 'Concentration (a.u.)', va='center', ha='center',
+    fig_k.subplots_adjust(top=0.80)
+    fig_k.text(0.04, 0.5, 'Concentration (a.u.)', va='center', ha='center',
              rotation='vertical', fontsize=12)
-    fig.text(0.5, 0.03, 'Delay (ps)', va='center', ha='center', fontsize=12)
-    fig.legend()
+    fig_k.text(0.5, 0.03, 'Delay (ps)', va='center', ha='center', fontsize=12)
+    fig_k.legend()
 
-#%% test calc
-test_ev_axis = np.linspace(1,3,1024)
-test_ps_axis = np.append(np.linspace(0,1,10), np.logspace(0,4,1014, base=10))
 
-# t_21, t_11, t_20, t_01, t_03, t_33
 
-*test_t_const, = 10, 5000, 50, 400, 50, 6000
+# %%  raw data processing
 
-test_kinetic = kinetic_solve(test_ps_axis, test_t_const)
+raw_ev_axis = test_data_file[0,1:]
+positive_cutoff = np.searchsorted(test_data_file[1:,0]+0.5,0, side='left')+1
+raw_ps_axis = test_data_file[positive_cutoff:,0]+0.5
 
-#A, x0, W, b, Y0
+X = raw_ev_axis
+Y = raw_ps_axis
 
-tbox0_a, tbox0_xc, tbox0_w, tbox0_b, tbox0_y0 = 10, 2, 0.33, 0, 0
-tbox1_a, tbox1_xc, tbox1_w, tbox1_b, tbox1_y0 = 9, 2.3, 0.44, 0, 0
-tbox2_a, tbox2_xc, tbox2_w, tbox2_b, tbox2_y0 = 60, 1.8, 0.44, 0.5, 0
-tbox3_a, tbox3_xc, tbox3_w, tbox3_b, tbox3_y0 = 5, 2, 0.5, 0, 0
+raw_carpet =  test_data_file[positive_cutoff:,1:]
 
-test_gauss0 = skewed_g(test_ev_axis, 
-                       tbox0_a, tbox0_xc, tbox0_w, tbox0_b, tbox0_y0)
+# %% Modeliavimas
 
-test_gauss1 = skewed_g(test_ev_axis, 
-                       tbox1_a, tbox1_xc, tbox1_w, tbox1_b, tbox1_y0)
+modelis = lmfit.Model(box_scheme, independent_vars=['X', 'Y'])
 
-test_gauss2 = skewed_g(test_ev_axis, 
-                       tbox2_a, tbox2_xc, tbox2_w, tbox2_b, tbox2_y0)
 
-test_gauss3 = skewed_g(test_ev_axis, 
-                       tbox3_a, tbox3_xc, tbox3_w, tbox3_b, tbox3_y0)
 
-test_carpet = box_scheme(test_ev_axis, test_ps_axis,
-           10, 5000, 50, 400, 50, 6000,
-           tbox0_a, tbox0_xc, tbox0_w, tbox0_b, tbox0_y0,
-           tbox1_a, tbox1_xc, tbox1_w, tbox1_b, tbox1_y0,
-           tbox2_a, tbox2_xc, tbox2_w, tbox2_b, tbox2_y0,
-           tbox3_a, tbox3_xc, tbox3_w, tbox3_b, tbox3_y0)
+#print('parameter names: {}'.format(modelis.param_names))
 
-#%%plotavimas
+modelis.set_param_hint('t_21', value=0.550, min=0, max=1e5, vary=True)
+modelis.set_param_hint('t_11', value=50000.0, min=0, max=1e5, vary=True)
+modelis.set_param_hint('t_20', value=12.0, min=0, max=1e5, vary=True)
+modelis.set_param_hint('t_01', value=5.0, min=0, max=1e5, vary=True)
+modelis.set_param_hint('t_03', value=1.0, min=0, max=1e5, vary=True)
+modelis.set_param_hint('t_33', value=150.0, min=0, max=1e5, vary=True)
+
+modelis.set_param_hint('box0_a', value=1.0, min=0, max=10000.0, vary=True)
+modelis.set_param_hint('box0_xc', value=1.5, min=1.4, max=2.4, vary=True)
+modelis.set_param_hint('box0_w', value=1.0, min=0, max=2.0, vary=True)
+modelis.set_param_hint('box0_b', value=1.0, min=0, max=1.0, vary=True)
+modelis.set_param_hint('box0_y0', value=0, min=-1, max=1.0, vary=False)
+
+modelis.set_param_hint('box1_a', value=1.0, min=0, max=10000.0, vary=True)
+modelis.set_param_hint('box1_xc', value=2, min=1.4, max=2.4, vary=True)
+modelis.set_param_hint('box1_w', value=1.0, min=0, max=2.00, vary=True)
+modelis.set_param_hint('box1_b', value=1.0, min=0, max=1.0, vary=True)
+modelis.set_param_hint('box1_y0', value=0, min=-1, max=1.0, vary=False)
+
+modelis.set_param_hint('box2_a', value=0.0, min=0, max=10000.0, vary=False)
+modelis.set_param_hint('box2_xc', value=1.5, min=1.4, max=2.4, vary=False)
+modelis.set_param_hint('box2_w', value=1.0, min=0, max=2.0, vary=False)
+modelis.set_param_hint('box2_b', value=1.0, min=0, max=1.0, vary=False)
+modelis.set_param_hint('box2_y0', value=0, min=-1, max=1.0, vary=False)
+
+modelis.set_param_hint('box3_a', value=1.0, min=0, max=10000.0, vary=True)
+modelis.set_param_hint('box3_xc', value=2, min=1.4, max=2.4, vary=True)
+modelis.set_param_hint('box3_w', value=1.0, min=0, max=2.0, vary=True)
+modelis.set_param_hint('box3_b', value=1.0, min=0, max=1.0, vary=True)
+modelis.set_param_hint('box3_y0', value=0, min=-1, max=1.0, vary=False)
+
+#modelis.print_param_hints(8)
+
+parametrai = modelis.make_params()
+
+rezultatas = modelis.fit(raw_carpet, X=X, Y=Y, params=parametrai, method='differential_evolution')
+
+print(lmfit.fit_report(rezultatas))
+
+#%% plotavimas
+
+# fig = plt.figure()
+# ax0 = fig.add_subplot(1, 1, 1)
+# ax0.plot(test_ev_axis, test_gauss0, label='test0')
+# ax0.plot(test_ev_axis, test_gauss1, label='test1')
+# ax0.plot(test_ev_axis, test_gauss2, label='test2')
+# ax0.plot(test_ev_axis, test_gauss3, label='test3')
+# fig.legend()
+# plt.xlim(1.3, 2.6)
+
+t_21 = rezultatas.best_values['t_21']
+t_11 = rezultatas.best_values['t_11']
+t_20 = rezultatas.best_values['t_20']
+t_01 = rezultatas.best_values['t_01']
+t_03 = rezultatas.best_values['t_03']
+t_33 = rezultatas.best_values['t_33']
+
+*model_t_const, = t_21, t_11, t_20, t_01, t_03, t_33
+
+model_kinetic = kinetic_solve(Y, model_t_const)
+
+kinetikos_2scale(Y, model_kinetic, 'test')
+
+box0_a = rezultatas.best_values['box0_a']
+box0_xc = rezultatas.best_values['box0_xc']
+box0_w = rezultatas.best_values['box0_w']
+box0_b = rezultatas.best_values['box0_b']
+box0_y0 = rezultatas.best_values['box0_y0']
+
+box1_a = rezultatas.best_values['box1_a']
+box1_xc = rezultatas.best_values['box1_xc']
+box1_w = rezultatas.best_values['box1_w']
+box1_b = rezultatas.best_values['box1_b']
+box1_y0 = rezultatas.best_values['box1_y0']
+
+box2_a = rezultatas.best_values['box2_a']
+box2_xc = rezultatas.best_values['box2_xc']
+box2_w = rezultatas.best_values['box2_w']
+box2_b = rezultatas.best_values['box2_b']
+box2_y0 = rezultatas.best_values['box2_y0']
+
+box3_a = rezultatas.best_values['box3_a']
+box3_xc = rezultatas.best_values['box3_xc']
+box3_w = rezultatas.best_values['box3_w']
+box3_b = rezultatas.best_values['box3_b']
+box3_y0 = rezultatas.best_values['box3_y0']
+
+box0_spectra = skewed_g(X, box0_a, box0_xc, box0_w, box0_b, box0_y0)
+
+box1_spectra = skewed_g(X, box1_a, box1_xc, box1_w, box1_b, box1_y0)
+
+box2_spectra = skewed_g(X, box2_a, box2_xc, box2_w, box2_b, box2_y0)
+
+box3_spectra = skewed_g(X, box3_a, box3_xc, box3_w, box3_b, box3_y0)
 
 fig = plt.figure()
 ax0 = fig.add_subplot(1, 1, 1)
-ax0.plot(test_ev_axis, test_gauss0, label='test0')
-ax0.plot(test_ev_axis, test_gauss1, label='test1')
-ax0.plot(test_ev_axis, test_gauss2, label='test2')
-ax0.plot(test_ev_axis, test_gauss3, label='test3')
+ax0.plot(X, box0_spectra, label='box 0', color=CV_color_dict[0])
+ax0.plot(X, box1_spectra, label='box 1', color=CV_color_dict[1])
+ax0.plot(X, box2_spectra, label='box 2', color=CV_color_dict[2])
+ax0.plot(X, box3_spectra, label='box 3', color=CV_color_dict[3])
 fig.legend()
+plt.xlim(1.3, 2.6)
 
-kinetikos_2scale(test_ps_axis, test_kinetic, '0123', 'test')
 
-col_low_high_mp = [-1, 15, 'viridis']
+col_low_high_mp = [-1, 20, 'viridis']
 
-carpet_plot(test_ev_axis, test_ps_axis, test_carpet, 'test', col_low_high_mp)
+carpet_plot(X, Y, rezultatas.best_fit, 'model', col_low_high_mp)
+
+col_low_high_mp = [-1, 20, 'viridis']
+
+carpet_plot(X, Y, raw_carpet, 'raw', col_low_high_mp)
+
+col_low_high_mp = [-3, 3, 'terrain']
+
+carpet_plot(X, Y, raw_carpet-rezultatas.best_fit, 'rezidual', col_low_high_mp)
+
