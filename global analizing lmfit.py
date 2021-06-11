@@ -91,7 +91,7 @@ def laser_gauss(t):
     # N_ext, t_00, t_Laser = 2, 0.1, 0.35
 
     laser_w = 0.35
-    t_00 = 1
+    t_00 = .5
 
     normalization = quad(laser_normalization, -10, 10, args=laser_w)[0]
 
@@ -272,13 +272,14 @@ TA_spectra = np.c_[box0_spectra, box1_spectra, box2_spectra, box3_spectra]
 
 glob_ana_plot.TA_spectral('title',
                           X, [1.3, 2.6],
-                          TA_spectra, [0, 60],
+                          TA_spectra, [0.0, 1.1*np.amax(TA_spectra)],
                           ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
 
 
 glob_ana_plot.kinetikos_2scale('title',
                                Y, [-1, 7000], 5,
-                               np.c_[laser_gauss(Y), model_kinetic], [0, 2],
+                               np.c_[laser_gauss(Y), model_kinetic],
+                               [0, 1.1*np.amax(model_kinetic)],
                                ['Laser',
                                 'box 0', 'box 1', 'box 2', 'box 3', 'box 4'])
 
