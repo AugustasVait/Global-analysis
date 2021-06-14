@@ -278,7 +278,13 @@ TA_spectra = np.c_[box0_spectra, box1_spectra, box2_spectra, box3_spectra]
 glob_ana_plot.TA_spectral('title',
                           X, [1.3, 2.6],
                           TA_spectra, 
-                          [0.0, 1.1*np.amax(TA_spectra)], 'log',
+                          [0.01,1.1*np.amax(TA_spectra)], 'linear',
+                          ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
+
+glob_ana_plot.TA_spectral('title',
+                          X, [1.3, 2.6],
+                          TA_spectra, 
+                          [0.01,2*np.amax(TA_spectra)], 'log',
                           ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
 
 
@@ -305,6 +311,6 @@ glob_ana_plot.carpet_plot('Model',
                           raw_carpet-rezultatas.best_fit, [-3, 3, 'terrain'])
 
 import winsound
-frequency = 2500  # Set Frequency To 2500 Hertz
+frequency = 500  # Set Frequency To 2500 Hertz
 duration = 1000  # Set Duration To 1000 ms == 1 second
 winsound.Beep(frequency, duration)
