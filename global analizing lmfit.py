@@ -17,8 +17,9 @@ import glob_ana_plot
 # mano biblioteka su plotinimo funkcijomis, laikoma tame pačiame folderyje
 
 
-test_data_file = np.loadtxt("D:\\Python Playground\\global analysis test\\" +
-                            "test data\\pp_g68_340_1,5uJ_30kHz_eV." +
+test_data_file = np.loadtxt("C:\\VU FNI Cloud\\CarpetView Modeling\\GYAGG CV\\" +
+                            "4box models\\All F\\Final for paper\\" +
+                            "pp_g68_340_1,5uJ_30kHz_eV." +
                             "dat_pptraces_nochirp.dat")
 
 # %% funkcijos
@@ -180,17 +181,17 @@ modelis.set_param_hint('t_01', value=5.0, min=0, max=1e5, vary=True)
 modelis.set_param_hint('t_03', value=1.0, min=0, max=1e5, vary=True)
 modelis.set_param_hint('t_33', value=150.0, min=0, max=1e5, vary=True)
 
-modelis.set_param_hint('box0_a', value=1.0, min=0, max=10000.0, vary=True)
-modelis.set_param_hint('box0_xc', value=1.5, min=1.4, max=2.4, vary=True)
-modelis.set_param_hint('box0_w', value=1.0, min=0, max=2.0, vary=True)
-modelis.set_param_hint('box0_b', value=1.0, min=0, max=1.0, vary=True)
-modelis.set_param_hint('box0_y0', value=0, min=-1, max=1.0, vary=False)
+modelis.set_param_hint('box0_a', value=100.0, min=0, max=10000.0, vary=True)
+modelis.set_param_hint('box0_xc', value=1.85, min=1.4, max=2.4, vary=True)
+modelis.set_param_hint('box0_w', value=0.6, min=0, max=2.0, vary=True)
+modelis.set_param_hint('box0_b', value=0.50, min=-1, max=1.0, vary=True)
+modelis.set_param_hint('box0_y0', value=5, min=-10, max=10.0, vary=False)
 
-modelis.set_param_hint('box1_a', value=1.0, min=0, max=10000.0, vary=True)
-modelis.set_param_hint('box1_xc', value=2, min=1.4, max=2.4, vary=True)
-modelis.set_param_hint('box1_w', value=1.0, min=0, max=2.00, vary=True)
-modelis.set_param_hint('box1_b', value=1.0, min=0, max=1.0, vary=True)
-modelis.set_param_hint('box1_y0', value=0, min=-1, max=1.0, vary=False)
+modelis.set_param_hint('box1_a', value=15.0, min=0, max=10000.0, vary=True)
+modelis.set_param_hint('box1_xc', value=1.45, min=1.4, max=1.5, vary=True)
+modelis.set_param_hint('box1_w', value=0.80, min=0, max=1.00, vary=True)
+modelis.set_param_hint('box1_b', value=-0.166, min=-1, max=1.0, vary=True)
+modelis.set_param_hint('box1_y0', value=3.5, min=-10, max=1.00, vary=False)
 
 modelis.set_param_hint('box2_a', value=0.0, min=0, max=10000.0, vary=False)
 modelis.set_param_hint('box2_xc', value=1.5, min=1.4, max=2.4, vary=False)
@@ -198,11 +199,11 @@ modelis.set_param_hint('box2_w', value=1.0, min=0, max=2.0, vary=False)
 modelis.set_param_hint('box2_b', value=1.0, min=0, max=1.0, vary=False)
 modelis.set_param_hint('box2_y0', value=0, min=-1, max=1.0, vary=False)
 
-modelis.set_param_hint('box3_a', value=1.0, min=0, max=10000.0, vary=True)
-modelis.set_param_hint('box3_xc', value=2, min=1.4, max=2.4, vary=True)
-modelis.set_param_hint('box3_w', value=1.0, min=0, max=2.0, vary=True)
-modelis.set_param_hint('box3_b', value=1.0, min=0, max=1.0, vary=True)
-modelis.set_param_hint('box3_y0', value=0, min=-1, max=1.0, vary=False)
+modelis.set_param_hint('box3_a', value=80.0, min=0, max=10000.0, vary=True)
+modelis.set_param_hint('box3_xc', value=1.7, min=1.4, max=2.4, vary=True)
+modelis.set_param_hint('box3_w', value=0.8, min=0, max=2.0, vary=True)
+modelis.set_param_hint('box3_b', value=0, min=-1, max=1.0, vary=True)
+modelis.set_param_hint('box3_y0', value=11, min=-1, max=15.0, vary=False)
 
 # modelis.print_param_hints(8)
 
@@ -236,8 +237,6 @@ t_33 = rezultatas.best_values['t_33']
 model_kinetic = kinetic_solve(Y, model_t_const)
 
 laser = laser_gauss(Y)
-# geriausia, kad sutaptu su lazerio parametrais ODE funkcijoje
-
 
 box0_a = rezultatas.best_values['box0_a']
 box0_xc = rezultatas.best_values['box0_xc']
