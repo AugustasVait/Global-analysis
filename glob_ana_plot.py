@@ -119,7 +119,7 @@ def kinetikos_2scale(title,
 
 def TA_spectral(title,
                x_scale, x_lim,
-               y_data, y_lim,
+               y_data, y_lim, y_scale,
                legend):
     """
     Parameters
@@ -148,7 +148,7 @@ def TA_spectral(title,
         
     ax0.set_xlim(x_lim[0], x_lim[1])
     ax0.set_ylim(y_lim[0], y_lim[1])
-   # ax0.set_yscale("log")
+    ax0.set_yscale(y_scale)
         
     fig.subplots_adjust(top=0.80)
     fig.text(0.04, 0.5, 'TA signal (a.u.)', va='center', ha='center',

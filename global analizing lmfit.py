@@ -5,6 +5,11 @@ Created on Thu May 27 22:21:11 2021.
 
 Global analysis w/ LMfit
 
+ToDo:
+    Outline view spyderyje.
+    praturtinti komentarais
+    
+
 """
 
 # %% import libraries and data
@@ -271,7 +276,8 @@ TA_spectra = np.c_[box0_spectra, box1_spectra, box2_spectra, box3_spectra]
 
 glob_ana_plot.TA_spectral('title',
                           X, [1.3, 2.6],
-                          TA_spectra, [0.0, 1.1*np.amax(TA_spectra)],
+                          TA_spectra, 
+                          [0.0, 1.1*np.amax(TA_spectra)], 'log',
                           ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
 
 
