@@ -7,8 +7,9 @@ Global analysis w/ LMfit
 
 ToDo:
     Outline view spyderyje.
-    praturtinti komentarais
-    
+    Praturtinti komentarais
+    Pridėti vaizdinimą kur kitenikos sudaugintos su vidutine spektro verte 
+    ir suma palyginta su eksperimentu
 
 """
 
@@ -302,3 +303,8 @@ glob_ana_plot.carpet_plot('Model',
                           X, [1.3, 2.6],
                           Y, [-1, 7000], 5,
                           raw_carpet-rezultatas.best_fit, [-3, 3, 'terrain'])
+
+import winsound
+frequency = 2500  # Set Frequency To 2500 Hertz
+duration = 1000  # Set Duration To 1000 ms == 1 second
+winsound.Beep(frequency, duration)
