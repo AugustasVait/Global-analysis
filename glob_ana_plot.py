@@ -64,6 +64,8 @@ def carpet_plot(title,
     fig_c.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center',
              fontsize=12)
     fig_c.text(0.85, 0.78, r'   $\Delta$T'+' \n(mOD)', fontsize=12)
+    
+    return fig_c
 
 
 def kinetikos_2scale(title,
@@ -115,7 +117,10 @@ def kinetikos_2scale(title,
     fig_k.text(0.04, 0.5, 'Concentration (a.u.)', va='center', ha='center',
              rotation='vertical', fontsize=12)
     fig_k.text(0.5, 0.03, 'Delay (ps)', va='center', ha='center', fontsize=12)
-    fig_k.legend()
+    fig_k.legend(loc='best')
+    
+    return fig_k
+    
 
 def TA_spectral(title,
                x_scale, x_lim,
@@ -136,10 +141,10 @@ def TA_spectral(title,
     Spectra plot Figure.
     """    
     
-    fig = plt.figure()
-    ax0 = fig.add_subplot(1, 1, 1)
+    fig_t = plt.figure()
+    ax0 = fig_t.add_subplot(1, 1, 1)
     
-    fig.text(0.5, 0.85, title, va='center', ha='center', fontsize=12)
+    fig_t.text(0.5, 0.85, title, va='center', ha='center', fontsize=12)
 
     
     for idx in range(len(y_data[0, :])):
@@ -150,12 +155,12 @@ def TA_spectral(title,
     ax0.set_ylim(y_lim[0], y_lim[1])
     ax0.set_yscale(y_scale)
         
-    fig.subplots_adjust(top=0.80)
-    fig.text(0.04, 0.5, 'TA signal (a.u.)', va='center', ha='center',
+    fig_t.subplots_adjust(top=0.80)
+    fig_t.text(0.04, 0.5, 'TA signal (a.u.)', va='center', ha='center',
              rotation='vertical', fontsize=12)
-    fig.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center', fontsize=12)
-    fig.legend()
+    fig_t.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center', fontsize=12)
+    fig_t.legend(loc='best')
 
-
+    return fig_t
 
     
