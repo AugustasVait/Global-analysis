@@ -5,11 +5,10 @@ Created on Thu May 27 22:21:11 2021.
 
 Global analysis w/ LMfit
 
-ToDo:
+To Do:
     Outline view spyderyje.
     Praturtinti komentarais
     išvedimas
-    
 """
 
 # %% import libraries and data
@@ -24,14 +23,15 @@ import glob_ana_plot
 import time
 t_start = time.time()
 
-#test_data_file = np.loadtxt("C:\\VU FNI Cloud\\CarpetView Modeling\\GYAGG CV\\" +
-#                            "4box models\\All F\\Final for paper\\" +
-#                            "pp_g68_340_1,5uJ_30kHz_eV." +
-#                            "dat_pptraces_nochirp.dat")
 
-test_data_file = np.loadtxt("C:\\Users\\Lenovo\\Documents\\GitHub\\"+
-                            "Global-analysis\\test data\\"+
-                            "pp_g68_340_1,5uJ_30kHz_eV."+
+# test_data_file = np.loadtxt("C:\\Users\\Lenovo\\Documents\\GitHub\\"+
+#                             "Global-analysis\\test data\\"+
+#                             "pp_g68_340_1,5uJ_30kHz_eV."+
+#                             "dat_pptraces_nochirp.dat")
+
+test_data_file = np.loadtxt("D:\\Python Playground\\git\\" +
+                            "Global-analysis\\test data\\" +
+                            "pp_g68_340_1,5uJ_30kHz_eV." +
                             "dat_pptraces_nochirp.dat")
 
 # %% funkcijos
@@ -280,7 +280,6 @@ box2_spectra = skewed_g(X, box2_a, box2_xc, box2_w, box2_b, box2_y0)
 box3_spectra = skewed_g(X, box3_a, box3_xc, box3_w, box3_b, box3_y0)
 
 
-
 TA_spectra = np.c_[box0_spectra, box1_spectra, box2_spectra, box3_spectra]
 TA_means = np.mean(TA_spectra, axis=0)
 
@@ -300,52 +299,57 @@ TA_kinetic_sum = np.sum(TA_kinetic, axis=1)
 
 TA_kinetic_experimental = np.mean(raw_carpet, axis=1)
 
-lSpect_graph = glob_ana_plot.TA_spectral('TA Spectra',
-                          X, [1.3, 2.6],
-                          TA_spectra, 
-                          [1,2*np.amax(TA_spectra)], 'log',
-                          ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
+graph1 = glob_ana_plot.TA_spectral('TA Spectra',
+                                   X, [1.3, 2.6],
+                                   TA_spectra,
+                                   [1, 2*np.amax(TA_spectra)], 'log',
+                                   ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
 
-nSpect_graph = glob_ana_plot.TA_spectral('Normalized TA spectra',
-                          X, [1.3, 2.6],
-                          TA_spectra_norm, 
-                          [0,1.1*np.amax(TA_spectra_norm)], 'linear',
-                          ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
+graph2 = glob_ana_plot.TA_spectral('Normalized TA spectra',
+                                   X, [1.3, 2.6],
+                                   TA_spectra_norm,
+                                   [0, 1.1*np.amax(TA_spectra_norm)], 'linear',
+                                   ['Box 0', 'Box 1', 'Box 2', 'Box 3'])
 
-boxcon_graph = glob_ana_plot.kinetikos_2scale('Box filing kinetics',
-                               Y, [-1, 7000], 2,
-                               np.c_[laser_gauss(Y), model_kinetic],
-                               [0, 1.1*np.amax(model_kinetic)],
-                               ['Laser',
-                                'box 0', 'box 1', 'box 2', 'box 3', 'box 4'])
+graph3 = glob_ana_plot.kinetikos_2scale('Box filing kinetics',
+                                        Y, [-1, 7000], 2,
+                                        np.c_[laser_gauss(Y), model_kinetic],
+                                        [0, 1.1*np.amax(model_kinetic)],
+                                        ['Laser',
+                                         'box 0',
+                                         'box 1', 'box 2', 'box 3', 'box 4'])
 
-avgfit_graph = glob_ana_plot.kinetikos_2scale('Energy Averaged TA Kinetics',
-                               Y, [-1, 7000], 2,
-                               np.c_[TA_kinetic_experimental,
-                                     TA_kinetic, TA_kinetic_sum, ],
-                               [0, 1.1*np.amax(TA_kinetic_sum)],
-                               ['Experimental ',
-                                'box 0', 'box 1', 'box 2', 'box 3', 'Model sum'])
-    
-    
-mod_carpet_fig = glob_ana_plot.carpet_plot('Model',
-                          X, [1.3, 2.6],
-                          Y, [-1, 7000], 2,
-                          rezultatas.best_fit, [-1, np.amax(rezultatas.best_fit), 'tab20b'])
+graph4 = glob_ana_plot.kinetikos_2scale('Energy Averaged TA Kinetics',
+                                        Y, [-1, 7000], 2,
+                                        np.c_[TA_kinetic_experimental,
+                                              TA_kinetic, TA_kinetic_sum, ],
+                                        [0, 1.1*np.amax(TA_kinetic_sum)],
+                                        ['Experimental ',
+                                         'box 0', 'box 1', 'box 2', 'box 3',
+                                         'Model sum'])
 
-raw_carpet_fig = glob_ana_plot.carpet_plot('Raw data',
-                          X, [1.3, 2.6],
-                          Y, [0, 7000], 2,
-                          raw_carpet, [-1, np.amax(raw_carpet), 'tab20b'])
+graph5 = glob_ana_plot.carpet_plot('Model',
+                                   X, [1.3, 2.6],
+                                   Y, [-1, 7000], 2,
+                                   rezultatas.best_fit,
+                                   [-1, np.amax(rezultatas.best_fit),
+                                    'tab20b'])
 
-res_carpet_fig = glob_ana_plot.carpet_plot('Residual',
-                          X, [1.3, 2.6],
-                          Y, [0, 7000], 2,
-                          raw_carpet-rezultatas.best_fit, [-1, 1, 'Spectral'])
+graph5 = glob_ana_plot.carpet_plot('Raw data',
+                                   X, [1.3, 2.6],
+                                   Y, [0, 7000], 2,
+                                   raw_carpet,
+                                   [-1, np.amax(raw_carpet), 'tab20b'])
+
+graph7 = glob_ana_plot.carpet_plot('Residual',
+                                   X, [1.3, 2.6],
+                                   Y, [0, 7000], 2,
+                                   raw_carpet-rezultatas.best_fit,
+                                   [-1, 1, 'Spectral'])
 
 # %% Išvedimas
 
-import pptx
+# import pptx
 # pypsi, kad žinočiau jog baigė
 
 # %% Pabaiga
@@ -355,4 +359,4 @@ winsound.Beep(250, 500)
 winsound.Beep(500, 500)
 winsound.Beep(750, 500)
 
-print('Elapsed time: {} s'.format(round(time.time()-t_start,2)))
+print('Elapsed time: {} s'.format(round(time.time()-t_start, 2)))

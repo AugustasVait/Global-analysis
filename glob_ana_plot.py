@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jun 10 12:57:34 2021
+Created on Thu Jun 10 12:57:34 2021.
 
 @author: Lenovo
 """
@@ -10,11 +10,14 @@ import matplotlib.pyplot as plt
 CV_color_dict = {0: 'black', 1: 'red', 2: 'blue', 3: 'green', 4: 'purple',
                  5: 'orange'}
 
+
 def carpet_plot(title,
                 x_axis, x_lim,
                 y_axis, y_lim, y_break,
                 z_data, clr_min_max_mp):
     """
+    Kilimo piešimo f-ja.
+
     Parameters
     ----------
     title : string, pavadinimas.
@@ -31,9 +34,8 @@ def carpet_plot(title,
     Carpet plot Figure.
 
     """
-
     fig_c, (ax1, ax2) = plt.subplots(2, 1, sharex=True,
-                                   gridspec_kw={'height_ratios': [3, 1]})
+                                     gridspec_kw={'height_ratios': [3, 1]})
 
     im1 = ax1.pcolormesh(x_axis, y_axis, z_data, shading='auto',
                          cmap=clr_min_max_mp[2])
@@ -60,11 +62,11 @@ def carpet_plot(title,
     fig_c.subplots_adjust(right=0.825)
 
     fig_c.text(0.04, 0.5, 'Delay (ps)', va='center', ha='center',
-             rotation='vertical', fontsize=12)
+               rotation='vertical', fontsize=12)
     fig_c.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center',
-             fontsize=12)
+               fontsize=12)
     fig_c.text(0.85, 0.78, r'   $\Delta$T'+' \n(mOD)', fontsize=12)
-    
+
     return fig_c
 
 
@@ -73,6 +75,8 @@ def kinetikos_2scale(title,
                      y_data, y_lim,
                      legend):
     """
+    Kinetikų su dviem skalem plotinimo f-ja.
+
     Parameters
     ----------
     title : string, pavadinimas.
@@ -87,9 +91,8 @@ def kinetikos_2scale(title,
     -------
     kinetic plot Figure.
     """
-
     fig_k, (ax1, ax2) = plt.subplots(1, 2, sharey=True,
-                                   gridspec_kw={'width_ratios': [1, 3]})
+                                     gridspec_kw={'width_ratios': [1, 3]})
 
     title = title
 
@@ -99,7 +102,6 @@ def kinetikos_2scale(title,
                  color=CV_color_dict[idx])
         ax2.plot(x_scale, y_data[:, idx],
                  label=legend[idx], color=CV_color_dict[idx])
-
 
     ax1.set_xlim(x_lim[0], x_break)
     ax2.set_xlim(x_break, x_lim[1])
@@ -115,18 +117,20 @@ def kinetikos_2scale(title,
     ax2.tick_params(labelleft=False, length=0)
     fig_k.subplots_adjust(top=0.80)
     fig_k.text(0.04, 0.5, 'Concentration (a.u.)', va='center', ha='center',
-             rotation='vertical', fontsize=12)
+               rotation='vertical', fontsize=12)
     fig_k.text(0.5, 0.03, 'Delay (ps)', va='center', ha='center', fontsize=12)
-    fig_k.legend(loc='best')
-    
+    fig_k.legend()
+
     return fig_k
-    
+
 
 def TA_spectral(title,
-               x_scale, x_lim,
-               y_data, y_lim, y_scale,
-               legend):
+                x_scale, x_lim,
+                y_data, y_lim, y_scale,
+                legend):
     """
+    TA spekro piešimo f-ja.
+
     Parameters
     ----------
     title : string, pavadinimas.
@@ -139,28 +143,27 @@ def TA_spectral(title,
     Returns
     -------
     Spectra plot Figure.
-    """    
-    
+    """
     fig_t = plt.figure()
     ax0 = fig_t.add_subplot(1, 1, 1)
-    
+
     fig_t.text(0.5, 0.85, title, va='center', ha='center', fontsize=12)
 
-    
     for idx in range(len(y_data[0, :])):
         ax0.plot(x_scale, y_data[:, idx], color=CV_color_dict[idx+1],
                  label=legend[idx])
-        
+
     ax0.set_xlim(x_lim[0], x_lim[1])
     ax0.set_ylim(y_lim[0], y_lim[1])
     ax0.set_yscale(y_scale)
-        
+
     fig_t.subplots_adjust(top=0.80)
     fig_t.text(0.04, 0.5, 'TA signal (a.u.)', va='center', ha='center',
-             rotation='vertical', fontsize=12)
-    fig_t.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center', fontsize=12)
-    fig_t.legend(loc='best')
+               rotation='vertical', fontsize=12)
+    fig_t.text(0.5, 0.03, 'Probe energy (eV)', va='center', ha='center',
+               fontsize=12)
+    fig_t.legend()
 
     return fig_t
 
-    
+
